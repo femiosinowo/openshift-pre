@@ -1,0 +1,8 @@
+---
+# defaults file for resolv_conf
+
+resolv_conf_nameservers:
+  - 8.8.8.8
+  - 8.8.4.4
+resolv_conf_search_domains:
+  - "{{ ansible_domain }}"

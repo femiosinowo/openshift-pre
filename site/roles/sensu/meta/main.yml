@@ -1,0 +1,23 @@
+---
+
+galaxy_info:
+  author: Robert Readman
+  description: A role that installs the Sensu Server and Client
+  license: MIT
+  min_ansible_version: 1.8
+  platforms:
+    - name: EL
+      versions:
+        - 5
+        - 6
+        - 7
+  categories:
+    - monitoring
+allow_duplicates: yes
+dependencies:
+  - role: yumrepo
+    yumrepo_repos:
+      sensu:
+        name: sensu-main
+        baseurl: "{{ sensu_yum_repo_url }}"
+        gpgcheck: 0

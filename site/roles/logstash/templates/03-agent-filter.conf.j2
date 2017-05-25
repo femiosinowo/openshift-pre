@@ -1,0 +1,7 @@
+filter{
+
+
+#  grok { match => [ "message", "%{HTTPDATE:[@metadata][timestamp]}" ] }
+#  date { match => [ "[@metadata][timestamp]", "dd/MMM/yyyy:HH:mm:ss Z" ] }
+
+}

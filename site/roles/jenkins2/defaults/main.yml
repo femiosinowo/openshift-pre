@@ -1,0 +1,72 @@
+---
+# defaults file for ansible-role-jenkins
+
+jenkins2_version: jenkins
+
+jenkins2_disable_gpg_check: no
+
+jenkins2_rpm_key_validate_certs: yes
+
+jenkins2_rpm_key_proxy_url: ''
+
+# jenkins2_home: /var/lib/jenkins
+
+jenkins2_java_cmd: ''
+
+# jenkins2_user: jenkins
+
+jenkins2_java_options: "-Djava.awt.headless=true -Djenkins.install.runSetupWizard=false"
+
+jenkins2_http_port: 8080
+
+jenkins2_listen_address: ''
+
+jenkins2_debug_level: 5
+
+jenkins2_enable_access_log: no
+
+jenkins2_handler_max: 100
+
+jenkins2_handler_idle: 20
+
+jenkins2_args: ''
+
+jenkins2_context_path: ''
+
+jenkins2_cli_username: admin
+
+jenkins2_cli_password: admin
+
+jenkins2_proxy_host: ''
+
+jenkins2_proxy_port: 0
+
+jenkins2_proxy_username: ''
+
+jenkins2_proxy_password: ''
+
+jenkins2_proxy_no_proxy_hosts: ''
+
+# https://github.com/jenkinsci/jenkins/blob/master/core/src/main/resources/jenkins/install/platform-plugins.json
+jenkins2_suggested_plugins:
+  - ant
+  - antisamy-markup-formatter
+  - build-timeout
+  - cloudbees-folder
+  - credentials-binding
+  - email-ext
+  - git
+  - gradle
+  - ldap
+  - mailer
+  - matrix-auth
+  - pam-auth
+  - pipeline-stage-view
+  - ssh-slaves
+  - subversion
+  - timestamper
+  - workflow-aggregator
+  - github-organization-folder
+  - ws-cleanup
+
+jenkins2_plugins: []

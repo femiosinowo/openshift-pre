@@ -1,0 +1,52 @@
+---
+- name: "create root ssh directory"
+  file:
+    path=/root/.ssh
+    state=directory
+    owner=root
+    group=root    
+
+- name: "create ssh key"
+  copy:
+    src="keys/{{ node_name }}"
+    dest=/root/.ssh/id_rsa
+    
+- name: "create public ssh key"
+  copy:
+    src="public_keys/{{ node_name }}"
+    dest=/root/.ssh/id_rsa.pub
+#ssh_users:
+#  - name: root
+#    key: "{{ lookup('file', 'keys/{{ node_name }}') }}"
+    
+- name: Set up multiple authorized keys
+  authorized_key:
+    user: root
+    state: present
+    key: '{{ item }}'
+  with_file:
+    - public_keys/os-master1
+    - public_keys/os-node1
+    - public_keys/os-node2    
+    - public_keys/os-infranode1
+    
+        
+
+#- name: "create barman ssh directory"
+#  file:
+#    path={{ barman_create_barman_user.home }}/.ssh
+#    state=directory
+#    owner=barman
+#    group=barman
+    
+# - name: "create postgres ssh directory"
+ #  file:
+  #   path={{ postgres_create_barman_user.home }}/.ssh
+   #  state=directory
+   #  owner=postgres
+    # group=postgres  
+    
+
+
+        
+   

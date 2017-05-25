@@ -1,0 +1,18 @@
+---
+- hosts: all
+  roles:
+    - environment
+    - common
+    - ssh_keys_db
+    #- firewalld
+    #- ruby
+    #- resolv_conf
+    #- common
+    #- java
+    #- consul
+    - modules-extras
+    #- logstash
+
+    
+
+

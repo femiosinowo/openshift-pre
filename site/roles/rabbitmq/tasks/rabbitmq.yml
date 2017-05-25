@@ -1,0 +1,7 @@
+---
+
+- include: service.yml
+  when: not rabbitmq_docker
+
+- include: docker.yml
+  when: rabbitmq_docker

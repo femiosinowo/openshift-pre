@@ -1,0 +1,93 @@
+---
+# barman switch-xlog --force --archive db
+
+- name: create barman incoming directories
+  file:
+    state=directory
+    path="{{ barman_home }}/{{ item.name }}/incoming"
+    owner={{ barman_user }}
+    group={{ barman_user }}
+  with_items: barman_upstreams
+
+
+- name: create restore files
+  template:
+    dest={{ barman_create_barman_user.home }}/{{ item.name }}.sh
+    src=restore.rb.j2
+    owner={{ barman_user }}
+    group={{ barman_user }}
+    mode="u+x"
+  with_items: "{{ barman_upstreams }}"
+
+
+
+- name: add ssh config
+  template:
+    dest={{ barman_create_barman_user.home }}/.ssh/config
+    src=ssh_config.j2
+    owner={{ barman_user }}
+    group={{ barman_user }}
+    mode=0600
+
+
+    
+#- name: "add authorized ssh key"
+#  authorized_key:
+#    key="{{ barman_archive_pub_key }}"
+#    user={{ barman_user }}
+#    state=present
+
+- name: "write barman.conf"
+  template: src=barman.conf.j2 dest=/etc/barman.conf owner={{ barman_user }}
+
+- name: "create home directory"
+  file:
+    path={{ barman_home }}
+    state=directory
+    recurse=yes
+    owner={{ barman_user }}
+    group={{ barman_user }}
+
+- name: create log directory
+  file:
+    path={{ barman_log_dir }}
+    state=directory
+    owner={{ barman_user }}
+    group={{ barman_user }}
+
+- name: install the barman rpm from a remote repo
+  yum:
+    name: https://download.postgresql.org/pub/repos/yum/9.6/redhat/rhel-7-x86_64/pgdg-centos96-9.6-3.noarch.rpm
+    state: present
+    
+- name: "install barman"
+  yum: name={{ item }} state=present
+  with_items:
+  - barman
+
+#- name: "install barman deps, barman"
+#  pip: name=barman state=present
+
+- name: "add maintenance job"
+  cron:
+    name="barman maintenance job"
+    minute={{ barman_maintenance_schedule.split()[0] }}
+    hour={{ barman_maintenance_schedule.split()[1] }}
+    day={{ barman_maintenance_schedule.split()[2] }}
+    month={{ barman_maintenance_schedule.split()[3] }}
+    weekday={{ barman_maintenance_schedule.split()[4] }}
+    job="date >> {{ barman_maintenance_log_file }} && barman cron >> {{ barman_maintenance_log_file }} 2>&1"
+    user="{{ barman_user }}"
+    state=present
+
+- name: "add backup job"
+  cron:
+    name="barman backup job"
+    minute={{ barman_backup_schedule.split()[0] }}
+    hour={{ barman_backup_schedule.split()[1] }}
+    day={{ barman_backup_schedule.split()[2] }}
+    month={{ barman_backup_schedule.split()[3] }}
+    weekday={{ barman_backup_schedule.split()[4] }}
+    job="date >> {{ barman_backup_log_file }} && barman backup all >> {{ barman_backup_log_file }} 2>&1"
+    user="{{ barman_user }}"
+    state=present

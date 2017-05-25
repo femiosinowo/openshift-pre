@@ -1,0 +1,25 @@
+---
+- include: setup-RedHat.yml
+  when: ansible_os_family == 'RedHat'
+
+- include: setup-Debian.yml
+  when: ansible_os_family == 'Debian'
+
+- include: config.yml
+- include: ssl.yml
+- include: plugins.yml
+
+- name: Ensure Logstash is started and enabled on boot.
+  service: "name=logstash state=started enabled={{ logstash_enabled_on_boot }}"
+  
+- name: give logstash read to logs #setfacl -m u:logstash:r /var/log/messages
+  shell: setfacl -m u:logstash:r /var/log/messages
+  args:
+   executable: /bin/bash
+   
+- name: create logstash db directory
+  file:
+    path: "/var/cache/logstash"
+    state: directory
+    owner: logstash
+    group: logstash

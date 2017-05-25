@@ -1,0 +1,41 @@
+---
+# Key for use by master to send archive segments
+barman_archive_pub_key: "{{ lookup('file', 'barman_rsa_pub') }}"  # required
+# Writes as ~{{barman_user}}/.ssh/id_rsa
+# This key is used by Barman for SSH access onto the master
+barman_ssh_key_file: barman_rsa #required
+
+barman_home: /var/barman
+barman_log_dir: /var/log/barman
+barman_user: barman
+barman_groups: syslog # comma delimited list of groups
+barman_log_file: /var/log/barman/barman.log
+barman_log_level: DEBUG
+barman_compression: bzip2
+barman_maintenance_schedule: '*/30 * * * *' # How often to run `barman cron`
+barman_maintenance_log_file: /var/log/barman/cron.log
+barman_backup_schedule: '0 1 * * *' # How often to run `barman backup all`
+barman_backup_log_file: /var/log/barman/backup.log
+barman_configuration_directory: /etc/barman.d
+barman_ssh_known_hosts_additional: []
+barman_ssh_known_hosts_default:
+- 192.168.*
+- 10.1.*
+- 10.3.*
+- 10.4.*
+- 10.5.*
+- 10.6.*
+- 127.0.0.1
+- 172.17.*
+
+# List of servers to maintain backups for.
+#
+# Expects each upstream to have the following keys:
+# name - friendly name (required)
+# hostname - hostname of the upstream (required)
+# postgres_user - postgres user to use (defaults to postgres)
+# postgres_password - password for postgres_user (defaults to postgres)
+# ssh_user - user to use for ssh to upstream (defaults to postgres)
+# retention_policy - barman retention policy (see "Syntax for retention_policy"
+#                    on http://docs.pgbarman.org/) (defaults to 'recovery window of 1 day')
+barman_upstreams: []

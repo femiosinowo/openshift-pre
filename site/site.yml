@@ -1,0 +1,5 @@
+---
+- include: server_roles/all_servers.yml
+- include: server_roles/infranodes.yml
+- include: server_roles/masters.yml
+- include: server_roles/nodes.yml

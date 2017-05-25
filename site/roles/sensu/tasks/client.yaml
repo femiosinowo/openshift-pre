@@ -1,0 +1,35 @@
+---
+
+- name: Configure RabbitMQ for Sensu client
+  template:
+    src: rabbitmq.json.j2
+    dest: /etc/sensu/conf.d/rabbitmq.json
+  notify:
+    - Restart sensu-client {{ sensu_from }}
+  tags:
+    - sensu_config
+
+- name: Create Sensu client config
+  template:
+    src: client.json.j2
+    dest: /etc/sensu/conf.d/client.json
+  notify:
+    - Restart sensu-client {{ sensu_from }}
+  tags:
+    - sensu_config
+
+- name: Make sure sensu-client is enabled
+  service:
+    name: sensu-client
+    enabled: yes
+  tags:
+    - sensu_config
+
+- name: Make sure sensu-client is started
+  service:
+    name: sensu-client
+    state: started
+  register: sensu_service_client_started
+  tags:
+    - sensu_pkg
+    - sensu_config

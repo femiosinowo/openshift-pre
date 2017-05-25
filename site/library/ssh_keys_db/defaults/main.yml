@@ -1,0 +1,11 @@
+ssh_users:
+  - name: barman
+    key: "{{ lookup('file', 'barman_rsa_pub') }}"
+  - name: postgres
+    key: "{{ lookup('file', 'postgres_rsa_pub') }}"
+    
+postgres_ssh_key_file: postgres_rsa
+barman_ssh_key_file: barman_rsa
+barman_home: /var/barman
+postgres_rsa_pub_file: postgres_rsa_pub
+barman_rsa_pub_file: barman_rsa_pub

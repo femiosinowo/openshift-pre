@@ -1,0 +1,42 @@
+---
+
+- name: Install Sensu
+  yum:
+    name: "{{ sensu_pkg }}"
+    state: present
+  register: sensu_yum_install
+  tags:
+    - sensu_pkg
+
+- name: Install Sensu - restart server
+  debug:
+    msg: ""
+  changed_when: >
+    sensu_install_server and
+    sensu_yum_install.changed
+  notify:
+    - Restart sensu-server {{ sensu_from }}
+  tags:
+    - sensu_pkg
+
+- name: Install Sensu - restart api
+  debug:
+    msg: ""
+  changed_when: >
+    sensu_install_api and
+    sensu_yum_install.changed
+  notify:
+    - Restart sensu-api {{ sensu_from }}
+  tags:
+    - sensu_pkg
+
+- name: Install Sensu - restart client
+  debug:
+    msg: ""
+  changed_when: >
+    sensu_install_client and
+    sensu_yum_install.changed
+  notify:
+    - Restart sensu-client {{ sensu_from }}
+  tags:
+    - sensu_pkg

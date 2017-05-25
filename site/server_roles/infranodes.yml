@@ -1,0 +1,4 @@
+---
+- hosts: infranodes
+  roles:
+    #- common

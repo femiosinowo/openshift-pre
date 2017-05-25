@@ -1,0 +1,30 @@
+---
+#https://download.elastic.co/logstash/logstash/packages/centos/logstash-2.3.4-1.noarch.rpm
+#- name: Logstash Yum Repository (RedHat)
+#  copy:
+#    dest: "/etc/yum.repos.d/logstash-{{logstash_version}}.repo"
+#    content: "{{logstash_yum_config}}"
+#    owner: "root"
+#    group: "root"
+#    mode: "0644"
+
+- name: Add Elasticsearch GPG key.
+  rpm_key:
+    key: http://packages.elasticsearch.org/GPG-KEY-elasticsearch
+    state: present
+
+- name: Add Logstash repository.
+  copy:
+    src: logstash.repo
+    dest: /etc/yum.repos.d/logstash.repo
+    mode: 0644
+    
+
+    
+- name: Logstash packages (RedHat)
+  yum:
+    state: present
+    name: "logstash"
+    update_cache: yes
+
+# vi:ts=2:sw=2:et:ft=yaml

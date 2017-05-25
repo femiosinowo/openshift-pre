@@ -1,0 +1,36 @@
+filter {
+#  if [type] == "syslog" {
+#    grok {
+#      match => [ "message",  "%{SYSLOGBASE2} %{GREEDYDATA:syslog_message}" ]
+#      add_field => [ "received_at", "%{@timestamp}" ]
+#      add_field => [ "received_from", "%{host}" ]
+#      break_on_match => false
+#    }
+#    grok {
+#      match => [ "syslog_message", "Accepted %{WORD:auth_method} for %{USER:username} from %{IP:src_ip} port %{INT:src_port} ssh2" ]
+#      match => [ "syslog_message", "Failed %{WORD:auth_method} for %{USER:username} from %{IP:src_ip} port %{INT:src_port} ssh2" ]
+#      match => [ "syslog_message", "Failed %{WORD:auth_method} for invalid user %{USER:username} from %{IP:src_ip} port %{INT:src_port} ssh2" ]
+#      match => [ "syslog_message", "error retrieving information about user %{USER:username}" ]
+#      match => [ "syslog_message", "Invalid user %{USER:username} from %{IP:src_ip}" ]
+#      match => [ "syslog_message", "Received disconnect from %{IP:src_ip}: 11: disconnected by user" ]
+#      match => [ "syslog_message", "session opened for user %{USER:username}" ]
+#      match => [ "syslog_message", "session closed for user %{USER:username}" ]
+#      match => [ "syslog_message", "\(%{USER:username}\) CMD \(%{DATA:cronscript}\)" ]
+#      match => [ "syslog_message", "%{WORD:auth_method}: invalid user %{USER:username}" ]
+#      match => [ "syslog_message", "Address %{IP:src_ip} maps to %{HOST:hostname}, but this does not map back to the address - POSSIBLE BREAK-IN ATTEMPT!" ]
+#      break_on_match => false
+#    }
+#    date {
+#      match => [ "timestamp", "MMM d HH:mm:ss", "MMM dd HH:mm:ss" ]
+#    }
+#    geoip {
+#      source => "src_ip"
+#      target => "geoip"
+#      add_field => [ "[geoip][coordinates]", "%{[geoip][longitude]}" ]
+#      add_field => [ "[geoip][coordinates]", "%{[geoip][latitude]}" ]
+#    }
+#    mutate {
+#      convert => [ "[geoip][coordinates]", "float"]
+#    }
+#  }
+}

@@ -1,0 +1,7 @@
+# << Ansible generated file >>
+
+{% if logstash_filters != "" %}
+filter {
+{{logstash_filters}}
+}
+{% endif %}

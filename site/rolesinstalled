@@ -1,0 +1,25 @@
+ansible-galaxy install cyverse.elasticsearch
+ansible-galaxy install bertvv.httpd
+ansible-galaxy install geerlingguy.logstash
+ansible-galaxy install jmatt.beats
+ansible-galaxy install savagegus.consul
+ansible-galaxy install leifmadsen.kibana-4
+ansible-galaxy install binarytemple.java
+ansible-galaxy install dochang.pip
+nsible-galaxy install Stouts.rabbitmq
+
+https://github.com/modcloth/ansible-role-modcloth-barman
+https://github.com/manuel-sousa/ansible-modules-rabbitmq.git
+https://github.com/kbrebanov/ansible-resolv_conf.git
+ansible-galaxy install jtyr.sensu
+https://github.com/jtyr/ansible-uchiwa.git
+ansible-galaxy install sbaerlocher.redis
+https://github.com/sensu-plugins/sensu-plugins-ansible
+https://github.com/clarkf/ansible-sensu
+https://github.com/ohtomi/ansible-role-jenkins2.git
+ansible-galaxy install maanas.ansible-role-wget
+$ ansible-galaxy install marcelnijenhof.firewalld
+
+https://github.com/ansible/ansible-modules-extras
+
+ansible-galaxy install torian.logstash

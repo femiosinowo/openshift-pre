@@ -1,0 +1,63 @@
+---
+# file: roles/common/tasks/main.yml
+#- shell: ps -eo pcpu,user,args | sort -r -k1 | head -n5
+#  register: ps
+#- debug: var=ps.stdout_lines
+
+
+- name: "create openshift repo"
+  copy:
+    src=openshift.repo
+    dest=/etc/yum.repos.d/open.repo
+    
+- name:  yum clean all
+  shell: yum clean all
+  args:
+   executable: /bin/bash
+   
+- name: installing yum apps
+  yum:
+    name: "{{ item }}"
+    state: present
+  with_items:
+    - NetworkManager
+    - docker
+    - bash-completion
+    - vim
+    - tree
+
+    
+- name: stop docker 
+  service: name=docker state=stopped 
+  when: format_hdd is defined   
+
+- name:  remove /var/lib/docker/
+  shell: rm -rf /var/lib/docker/*
+  args:
+   executable: /bin/bash
+  when: format_hdd is defined
+
+- name: "Create Docker Storage File"
+  copy:
+    src=docker-storage-setup
+    dest=/etc/sysconfig/docker-storage-setup  
+    
+- name:  Configuring Docker Storage
+  shell: docker-storage-setup
+  args:
+   executable: /bin/bash
+  when: format_hdd is defined
+   
+- name: enable and start docker 
+  service: name=docker state=started  enabled=yes  
+  
+  
+- include: masters.yml
+  when: node_type == "master"
+  
+- include: infranodes.yml
+  when: node_type is defined and node_type == "infranode"
+  
+- include: nodes.yml  
+  when: node_only is defined
+   

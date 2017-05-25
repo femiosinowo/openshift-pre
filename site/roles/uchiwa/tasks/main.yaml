@@ -1,0 +1,70 @@
+---
+
+- name: Test if distribution is RedHat
+  assert:
+    that: >
+      ansible_os_family == "RedHat"
+
+- name: Create YUM repo file
+  yum_repository:
+    name: sensu-main
+    description: Sensu YUM repo
+    baseurl: "{{ uchiwa_yumrepo_url }}"
+    gpgcheck: 0
+    params: "{{ uchiwa_yumrepo_params }}"
+  tags:
+    - uchiwa_pkg
+
+- name: Install Uchiwa
+  package:
+    name: "{{ uchiwa_pkg }}"
+    state: present
+  notify:
+    - Restart Uchiwa
+  tags:
+    - uchiwa_pkg
+
+- name: Configure Uchiwa
+  template:
+    src: uchiwa.json.j2
+    dest: /etc/sensu/uchiwa.json
+  register: uchiwa_config_result
+  notify:
+    - Restart Uchiwa
+  tags:
+    - uchiwa_config
+
+- name: Check if the binary can bind to TCP port <1024
+  shell: getcap /opt/uchiwa/bin/uchiwa | grep cap_net_bind_service
+  register: uchiwa_bind_cap
+  failed_when: False
+  changed_when: False
+  when: uchiwa_allow_low_port
+  tags:
+    - uchiwa_config
+
+- name: Set capability on the binary file to be able to bind to TCP port <1024
+  shell:
+    setcap 'cap_net_bind_service=+ep' /opt/uchiwa/bin/uchiwa
+  when: uchiwa_allow_low_port and uchiwa_bind_cap.rc > 0
+  notify:
+    - Restart Uchiwa
+  tags:
+    - uchiwa_config
+
+- name: Make sure uchiva service is enabled
+  service:
+    name: uchiwa
+    enabled: yes
+  tags:
+    - uchiwa_service
+
+- name: Make sure uchiva service is started
+  service:
+    name: uchiwa
+    state: started
+  register: ntp_service_started
+  when: >
+      not uchiwa_config_result.changed
+  tags:
+    - uchiwa_service

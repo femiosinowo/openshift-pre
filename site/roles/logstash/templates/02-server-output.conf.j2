@@ -1,0 +1,12 @@
+output{
+
+   elasticsearch {
+      hosts => "{{ elasticsearch_host }}:9200"
+      index => "logstash-%{+YYYY.MM.dd}"
+    }  
+    stdout {  codec => rubydebug   }
+
+
+
+
+}

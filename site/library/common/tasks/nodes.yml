@@ -1,0 +1,24 @@
+---
+#- name:  "register some envs"
+#  shell: "{{ item }}"
+#  args:
+#   executable: /bin/bash
+#  with_items:
+#    - ""
+#    - ""
+#    - ""
+#    - ""
+    
+- name:  "pull docker images"
+  shell: "{{ item }}"
+  args:
+   executable: /bin/bash
+  with_items:
+     - "docker pull $REGISTRY/$PTH/ose-deployer:v$OSE_VERSION"
+     - "docker pull $REGISTRY/$PTH/ose-sti-builder:v$OSE_VERSION"
+     - "docker pull $REGISTRY/$PTH/ose-pod:v$OSE_VERSION"
+     - "docker pull $REGISTRY/$PTH/ose-keepalived-ipfailover:v$OSE_VERSION"
+     - "docker pull $REGISTRY/$PTH/ruby-20-rhel7"
+     - "docker pull $REGISTRY/$PTH/mysql-55-rhel7"
+     - "docker pull openshift/hello-openshift:v1.2.1"
+     #- ""

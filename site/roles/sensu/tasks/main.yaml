@@ -1,0 +1,18 @@
+---
+
+- name: Test distribution
+  assert:
+    that: >
+      ansible_os_family == "RedHat" and
+      ansible_distribution_major_version | int >= 5
+
+- include: common.yaml
+
+- include: server.yaml
+  when: sensu_install_server
+
+- include: api.yaml
+  when: sensu_install_api
+
+- include: client.yaml
+  when: sensu_install_client

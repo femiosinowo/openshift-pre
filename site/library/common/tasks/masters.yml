@@ -1,0 +1,6 @@
+- name: installing yum apps
+  yum:
+    name: "{{ item }}"
+    state: present
+  with_items:
+    - atomic-openshift-utils

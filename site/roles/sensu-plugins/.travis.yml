@@ -1,0 +1,38 @@
+language: ruby
+sudo: required
+cache:
+- bundler
+before_install:
+  - sudo apt-get install libgmp3-dev
+  - gem update bundler
+install:
+- bundle install
+rvm:
+- 1.9.3
+- 2.0
+- 2.1
+- 2.2
+notifications:
+  email:
+    recipients:
+    - sensu-plugin@sensu-plugins.io
+    on_success: change
+    on_failure: always
+script:
+- bundle exec rake default
+- gem build sensu-plugins-ansible.gemspec
+- gem install sensu-plugins-ansible-*.gem
+deploy:
+  provider: rubygems
+  api_key:
+    secure: 4O9pjHK4eZtsZ3JhQVIOjB6f/rs49B819KgjtxxDcucxgzFlM0ML70DMxQLylrhyH0qqGiItrMrEOMqPQU7UVL3Ki7AthnA06uTtGBwyNLGYk+aupBCksUSTbLybaOk2zKybrQZ2xzJFxF+yfbIthOJEYZt+O6bSe0tn985pOH8=
+  gem: sensu-plugins-ansible
+  on:
+    tags: true
+    repo: sensu-plugins/sensu-plugins-ansible
+    all_branches: true
+    rvm: 1.9.3
+    rvm: 2.0
+    rvm: 2.1
+    rvm: 2.2
+

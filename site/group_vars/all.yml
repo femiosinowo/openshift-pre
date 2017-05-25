@@ -1,0 +1,152 @@
+environment_config:
+  REGISTRY: "registry.access.redhat.com"
+  PTH: "openshift3"
+  OSE_VERSION1: "$(yum info atomic-openshift | grep Version | awk '{print $3}')"
+  OSE_VERSION: 3.3.0.32
+
+
+
+
+
+
+
+#general servers ip
+filebeat_logstash_host: 192.168.100.102
+#consul_server: 192.168.100.104
+#barman_server: 192.168.100.109
+#dns_server: 10.10.10.11
+#sensu::server::ip: 192.168.100.106
+
+consul_server: 192.168.100.120
+barman_server: 192.168.100.120
+dns_server: 10.10.10.11
+sensu::server::ip: 192.168.100.120
+
+
+consul_master: "{{ consul_server }}"
+
+resolv_conf_nameservers:
+      - 127.0.0.1
+      - "{{ dns_server }}"
+      - 8.8.8.8
+resolv_conf_search_domains:
+      - paosin.local
+      - node.consul
+
+java_packages:
+  - "java-1.8.0-openjdk"
+
+
+        
+#consul
+consul_clients_group: all
+consul_bind_interface: eth1
+consul_enable_dnsmasq: false
+
+consul_servers_group: "consul_servers"
+consul_version: 0.7.2
+
+consul_datacenter: "paosin-ansible"
+
+
+consul_is_server: false
+consul_bootstrap: false
+consul_bind_address: "{{ ansible_eth1.ipv4.address  }}"
+consul_node_name: "{{ ansible_fqdn }}"
+consul_use_systemd: true
+consul_advertise_address: "{{ ansible_eth1.ipv4.address  }}"
+consul_servers: ["{{consul_server}}"]
+consul_join_at_start: true
+consul_log_level: "DEBUG"
+consul_dns_config: false
+consul_recursors: 
+ - "{{ dns_server }}"
+
+consul_group_name: sensu_servers
+consul_node_role: client
+
+
+sensu::server: "sensu.service.{{consul_datacenter}}.consul"
+rabbitmq::host: "rabbitmq.service.{{consul_datacenter}}.consul"
+
+postgresql_server1: "postgresql.service.{{consul_datacenter}}.consul"
+#sensu_ssl_gen_certs: true
+#sensu_deploy_rabbitmq: false
+
+#sensu_deploy_redis: false
+#
+#rabbitmq_port: 5672
+
+#sensu_api_host:  "sensu.service.{{consul_datacenter}}.consul"
+
+rabbitmq_host: "rabbitmq.service.{{consul_datacenter}}.consul"
+elasticsearch_host: "elasticsearch.service.{{consul_datacenter}}.consul"
+server__sensu: "sensu.service.{{consul_datacenter}}.consul"
+
+sensu_plugins_directory: "/opt/sensu/embedded/bin" #"/etc/sensu/plugins" #"/opt/sensu/embedded/bin" # 
+sensu_ruby_path: "/opt/sensu/embedded/bin/ruby"
+
+sensu_rabbitmq_host: "{{ rabbitmq_host }}"
+sensu_rabbitmq_port: 5672
+sensu_rabbitmq_user: sensu
+sensu_rabbitmq_password: sensu
+sensu_rabbitmq_vhost: /sensu
+sensu_install_server: false
+sensu_install_api: false
+sensu_install_client: true
+
+sensu_redis_host: "redis.service.{{consul_datacenter}}.consul"
+sensu_api_host: "sensu.service.{{consul_datacenter}}.consul"
+
+# Default sensu-client config variables
+sensu_client_name: "{{ ansible_hostname }}"
+sensu_client_address: "{{ ansible_eth1.ipv4.address }}"
+sensu_client_subscriptions:
+  - ALL
+
+
+
+firewalld_allow_services:
+  - { service: "ssh" ,  zone: public ,  permanent: True  ,  state: enabled  }
+  
+firewalld_allow_ports:
+  - { port: 8301/tcp , zone: public , state: enabled } 
+  #- { port: 8300/tcp , zone: public , state: enabled } 
+  #- { port: 8302/tcp , zone: public , state: enabled }
+  #- { port: 8500/tcp , zone: public , state: enabled }
+  #- { port: 8600/udp , zone: public , state: enabled }
+  #- { port: 8543/tcp , zone: public , state: enabled }
+  
+#beats
+beat_name: filebeat
+beat_config:
+  filebeat:
+    prospectors:
+      - paths:
+          - "/var/log/de/*.log"
+        document_type: "de-log"
+    output:
+      logstash:
+        hosts:
+          - "{{filebeat_logstash_host}}"
+        index: "{{filebeat_index_pattern}}"
+    shipper:
+      name: "{{ansible_hostname}}"
+      tags: 
+        - "{{ inventory_file.split('/')[-1].split('.')[0] }}"
+    logging:
+     to_files: true
+     level: info
+     files:
+       path: /var/log/filebeat
+       name: filebeat
+       rotateeverybytes: 10485760
+       
+       
+dynamic_data_store: /etc/dynamic
+
+#logstash
+logstash_configs:
+  - 01-agent-input.conf
+  - 02-agent-output.conf
+  - 03-agent-filter.conf

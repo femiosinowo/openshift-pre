@@ -1,0 +1,9 @@
+---
+
+- name: Restart Uchiwa
+  service:
+    name: uchiwa
+    state: restarted
+  when: >
+    uchiwa_service_started is not defined or
+    not uchiwa_service_started.changed
